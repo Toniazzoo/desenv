@@ -1,36 +1,45 @@
 <?php
 
+
 namespace App\Http\Controllers;
 
-use App\Models\Aluno;
+
+use App\Models\Usuario;
 use App\Models\CategoriaFormacao;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Dompdf\Adapter\PDFLib;
 use Illuminate\Http\Request;
 use Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
-class AlunoController extends Controller
+
+class UsuarioController extends Controller
 {
     function index()
     {
         //select * from
-        $dados = Aluno::All();
+        $dados = Usuario::All();
 
-        return view('aluno.list', [
+
+        return view('Usuario.list', [
             'dados' => $dados
         ]);
     }
+
 
     function create()
     {
         $categorias = CategoriaFormacao::All();
 
-        return view('aluno.form',[
+
+        return view('Usuario.form',[
             'categorias'=> $categorias,
         ]);
     }
 
+
     function store(Request $request)
     {
+
 
         $request->validate(
             [
@@ -54,40 +63,52 @@ class AlunoController extends Controller
                 ]
         );
 
+
         $data = $request->all();
         $imagem = $request->file('imagem');
+
 
         if($imagem){
             $nome_arquivo=
             date('YmdHis').".".$imagem->getClientOriginalExtension();
-            $diretorio = "imagem/aluno/";
+            $diretorio = "imagem/Usuario/";
+
 
             $imagem->storeAs($diretorio,
                 $nome_arquivo,'public');
+
 
             $data['imagem'] = $diretorio.$nome_arquivo;
         }
 
 
-        Aluno::create($data);
 
-        return redirect('aluno');
+
+        Usuario::create($data);
+
+
+        return redirect('Usuario');
     }
+
 
     function edit($id)
     {
-        $dado = Aluno::find($id);
+        $dado = Usuario::find($id);
+
 
         $categorias = CategoriaFormacao::All();
 
-        return view('aluno.form', [
+
+        return view('Usuario.form', [
             'dado' => $dado,
             'categorias'=>$categorias,
         ]);
     }
 
+
     function update(Request $request, $id)
     {
+
 
         $request->validate(
             [
@@ -111,65 +132,85 @@ class AlunoController extends Controller
                 ]
         );
 
+
         $data = $request->all();
         $imagem = $request->file('imagem');
+
 
         if($imagem){
             $nome_arquivo=
             date('YmdHis').".".$imagem->getClientOriginalExtension();
-            $diretorio = "imagem/aluno/";
+            $diretorio = "imagem/Usuario/";
+
 
             $imagem->storeAs($diretorio,
                 $nome_arquivo,'public');
 
+
             $data['imagem'] = $diretorio.$nome_arquivo;
         }
 
-        Aluno::updateOrCreate(
+
+        Usuario::updateOrCreate(
             ['id' => $id],
             $data
         );
 
-        return redirect('aluno');
+
+        return redirect('Usuario');
     }
+
 
     public function destroy($id)
     {
-        $aluno = Aluno::findOrFail($id);
+        $Usuario = Usuario::findOrFail($id);
 
-        if($aluno->hasFile('imagem')){
-            Storage::delete($aluno->imagem);
+
+        if($Usuario->hasFile('imagem')){
+            Storage::delete($Usuario->imagem);
         }
 
-        $aluno->delete();
 
-        return redirect('aluno');
+        $Usuario->delete();
+
+
+        return redirect('Usuario');
     }
+
 
     public function search(Request $request)
     {
         if (!empty($request->valor)) {
-            $dados = Aluno::where(
+            $dados = Usuario::where(
                 $request->tipo,
                 'like',
                 "%$request->valor%"
 
+
             )->get();
         } else {
-            $dados = Aluno::All();
+            $dados = Usuario::All();
         }
-        return view('aluno.list', ['dados' => $dados]);
+        return view('Usuario.list', ['dados' => $dados]);
     }
 
 
     public function report(){
 
-        $alunos = Aluno::All();
 
-        $data = ['titulo'=>"Relatório Listagem de Alunos", 'alunos' => $alunos,];
+        $Usuarios = Usuario::All();
 
-        $pdf = Pdf::loadView('aluno.report', $data);
-        return $pdf->download('relatorio_aluno.pdf');
+
+
+
+        $data = ['titulo' => "Relatório Listagem de Usuarios", 'Usuarios' => $Usuarios,];
+
+
+        $pdf = Pdf::loadView('Usuario.report', $data);
+        return $pdf->download('relatório_Usuario.pdf');
     }
+
+
+
 
 }

@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Turma extends Model
+class Reserva extends Model
 {
     use HasFactory;
 
-    protected $table = "turma";
+    protected $table = "reserva";
 
     protected $fillable = [
         'nome',
@@ -32,7 +32,7 @@ class Turma extends Model
     }
 
     public function curso(){
-        return $this->belongsTo(Curso::class, 'curso_id');
+        return $this->belongsTo(Quarto::class, 'curso_id');
     }
 }
 

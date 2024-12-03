@@ -1,34 +1,42 @@
 <?php
 
+
 namespace App\Http\Controllers;
 
+
 use App\Models\CategoriaFormacao;
-use App\Models\Curso;
+use App\Models\Quarto;
 use Illuminate\Http\Request;
 
-class CursoController extends Controller
+
+class QuartoController extends Controller
 {
     function index()
     {
         //select * from
-        $dados = Curso::All();
+        $dados = Quarto::All();
 
-        return view('curso.list', [
+
+        return view('Quarto.list', [
             'dados' => $dados
         ]);
     }
+
 
     function create()
     {
         $categorias = CategoriaFormacao::All();
 
-        return view('curso.form',[
+
+        return view('Quarto.form',[
             'categoria'=> $categorias,
         ]);
     }
 
+
     function store(Request $request)
     {
+
 
         $request->validate(
             [
@@ -41,38 +49,50 @@ class CursoController extends Controller
                 ]
         );
 
+
         $data = $request->all();
         $imagem = $request->file('imagem');
+
 
         if($imagem){
             $nome_arquivo=
             date('YmdHis').".".$imagem->getClientOriginalExtension();
-            $diretorio = "imagem/curso/";
+            $diretorio = "imagem/Quarto/";
+
 
             $imagem->storeAs($diretorio,
                 $nome_arquivo,'public');
+
 
             $data['imagem'] = $diretorio.$nome_arquivo;
         }
 
 
-        Curso::create($data);
 
-        return redirect('curso');
+
+        Quarto::create($data);
+
+
+        return redirect('Quarto');
     }
+
 
     function edit($id)
     {
-        $dado = Curso::find($id);
+        $dado = Quarto::find($id);
 
 
-        return view('curso.form', [
+
+
+        return view('Quarto.form', [
             'dado' => $dado,
         ]);
     }
 
+
     function update(Request $request, $id)
     {
+
 
         $request->validate(
             [
@@ -85,37 +105,45 @@ class CursoController extends Controller
                 ]
         );
 
+
         $data = $request->all();
 
-        Curso::updateOrCreate(
+
+        Quarto::updateOrCreate(
             ['id' => $id],
             $data
         );
 
-        return redirect('curso');
+
+        return redirect('Quarto');
     }
+
 
     public function destroy($id)
     {
-        $curso = Curso::findOrFail($id);
+        $Quarto = Quarto::findOrFail($id);
 
-        $curso->delete();
 
-        return redirect('curso');
+        $Quarto->delete();
+
+
+        return redirect('Quarto');
     }
+
 
     public function search(Request $request)
     {
         if (!empty($request->valor)) {
-            $dados = Curso::where(
+            $dados = Quarto::where(
                 $request->tipo,
                 'like',
                 "%$request->valor%"
 
+
             )->get();
         } else {
-            $dados = Curso::All();
+            $dados = Quarto::All();
         }
-        return view('curso.list', ['dados' => $dados]);
+        return view('Quarto.list', ['dados' => $dados]);
     }
 }

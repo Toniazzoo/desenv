@@ -1,38 +1,46 @@
 <?php
 
+
 namespace App\Http\Controllers;
+
 
 use App\Models\CategoriaFormacao;
 use App\Models\Professor;
-use App\Models\Curso;
-use App\Models\Turma;
+use App\Models\Quarto;
+use App\Models\Reserva;
 use Illuminate\Http\Request;
 
-class TurmaController extends Controller
+
+class ReservaController extends Controller
 {
     function index()
     {
         //select * from
-        $dados = Turma::All();
+        $dados = Reserva::All();
 
-        return view('turma.list', [
+
+        return view('Reserva.list', [
             'dados' => $dados
         ]);
     }
 
+
     function create()
     {
         $professores = Professor::All();
-        $cursos = Curso::All();
+        $cursos = Quarto::All();
 
-        return view('turma.form',[
+
+        return view('Reserva.form',[
             'professores'=> $professores,
             'cursos'=> $cursos,
         ]);
     }
 
+
     function store(Request $request)
     {
+
 
         $request->validate(
             [
@@ -49,38 +57,47 @@ class TurmaController extends Controller
                 ]
         );
 
+
         $data = $request->all();
         $imagem = $request->file('imagem');
+
 
         if($imagem){
             $nome_arquivo=
             date('YmdHis').".".$imagem->getClientOriginalExtension();
-            $diretorio = "imagem/turma/";
+            $diretorio = "imagem/Reserva/";
+
 
             $imagem->storeAs($diretorio,
                 $nome_arquivo,'public');
+
 
             $data['imagem'] = $diretorio.$nome_arquivo;
         }
 
 
-        Turma::create($data);
 
-        return redirect('turma');
+
+        return redirect('Reserva');
     }
+
 
     function edit($id)
     {
-        $dado = Turma::find($id);
+        $dado = Reserva::find($id);
 
 
-        return view('turma.form', [
+
+
+        return view('Reserva.form', [
             'dado' => $dado,
         ]);
     }
 
+
     function update(Request $request, $id)
     {
+
 
         $request->validate(
             [
@@ -93,37 +110,45 @@ class TurmaController extends Controller
                 ]
         );
 
+
         $data = $request->all();
 
-        Turma::updateOrCreate(
+
+        Reserva::updateOrCreate(
             ['id' => $id],
             $data
         );
 
-        return redirect('turma');
+
+        return redirect('Reserva');
     }
+
 
     public function destroy($id)
     {
-        $turma = Turma::findOrFail($id);
+        $Reserva = Reserva::findOrFail($id);
 
-        $turma->delete();
 
-        return redirect('turma');
+        $Reserva->delete();
+
+
+        return redirect('Reserva');
     }
+
 
     public function search(Request $request)
     {
         if (!empty($request->valor)) {
-            $dados = Turma::where(
+            $dados = Reserva::where(
                 $request->tipo,
                 'like',
                 "%$request->valor%"
 
+
             )->get();
         } else {
-            $dados = Turma::All();
+            $dados = Reserva::All();
         }
-        return view('turma.list', ['dados' => $dados]);
+        return view('Reserva.list', ['dados' => $dados]);
     }
 }
